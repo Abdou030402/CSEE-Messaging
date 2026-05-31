@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__csee-messaging__draft_message",
+      "mcp__csee-messaging__send_email",
+      "mcp__slack__*"
+    ]
+  }
+}

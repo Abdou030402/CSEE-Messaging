@@ -2,9 +2,9 @@
 .env
 token.json
 
-# Local data with real recipients / real message examples / real signature (PII)
-recipients_email.txt
-recipients_slack.txt
+# Local data with real message examples / real signature (PII)
+# NOTE: recipients_email.txt / recipients_slack.txt are committed as example
+# test data for now; they'll be replaced by a database lookup later.
 examples/historical_messages.md
 signature.txt
 

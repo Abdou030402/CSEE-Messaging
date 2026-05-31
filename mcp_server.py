@@ -28,6 +28,10 @@ TOOLS = [
                 "request": {
                     "type": "string",
                     "description": "Plain English description of the message to draft, including all known details (deadlines, names, links, etc.)"
+                },
+                "phase": {
+                    "type": "string",
+                    "description": "Optional. The practical-course phase this message belongs to, matching a folder under .claude/skills/ (e.g. 'phase-01-acceptance', 'phase-02-events'). When set, only that phase's templates are loaded. Omit to consider all phases."
                 }
             },
             "required": ["request"]
@@ -50,8 +54,9 @@ TOOLS = [
 
 def handle_tool(name: str, arguments: dict) -> str:
     if name == "draft_message":
-        from draft_message import _run_claude, SYSTEM_PROMPT
-        return _run_claude(arguments["request"], system=SYSTEM_PROMPT)
+        from draft_message import _run_claude, build_system_prompt
+        system = build_system_prompt(arguments.get("phase"))
+        return _run_claude(arguments["request"], system=system)
 
     elif name == "send_email":
         from send_email import send_email as _send_email

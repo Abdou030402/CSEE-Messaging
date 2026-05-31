@@ -43,17 +43,17 @@ Draft course-related announcements, emails, and Slack messages for the Center fo
 ### 1. Acceptance Email
 Sent to students accepted into a practical course.
 Required inputs: `course_name`, `semester`, `slack_invite_link`, `confirmation_deadline`, `drop_deadline`
-See: `examples/acceptance_email.md`
+Template: `.claude/skills/phase-01-acceptance/templates/acceptance_email.md`
 
 ### 2. Event Invitation Email
 Sent to all participants for demos, workshops, kickoffs.
 Required inputs: `event_name`, `date`, `time`, `location`, `location_link`, `agenda_items[]`
-See: `examples/event_invitation_email.md`
+Template: `.claude/skills/phase-02-events/templates/event_invitation_email.md`
 
 ### 3. Slack Welcome + Contract Message
 Sent to new fellows/team members on Slack.
 Required inputs: `recipient_first_name`, `batch_name`, `folder_link`, `translation_link`, `payment_note`
-See: `examples/slack_welcome_contract.md`
+Template: `.claude/skills/phase-01-acceptance/templates/slack_welcome_contract.md`
 
 ### 4. Reminder Message (email or Slack)
 Sent before a deadline or event.

@@ -5,6 +5,7 @@ Usage: python draft_message.py
 """
 
 import re
+import glob
 import json
 import subprocess
 import sys
@@ -13,6 +14,7 @@ import shutil
 from typing import Optional, Tuple
 
 SKILL_DIR = os.path.dirname(os.path.abspath(__file__))
+SKILLS_DIR = os.path.join(SKILL_DIR, ".claude", "skills")
 
 
 def _load_recipients(filename: str) -> list:
@@ -33,24 +35,51 @@ def _read_first_existing(*filenames: str) -> str:
 
 _SIGNATURE = _read_first_existing("signature.txt", "signature.example.txt").strip()
 
-SYSTEM_PROMPT = f"""
+
+def _load_templates(phase: Optional[str] = None) -> str:
+    """Concatenate template .md files. If `phase` is given (a folder name under
+    .claude/skills/, e.g. 'phase-01-acceptance'), load only that phase's
+    templates; otherwise load every phase's templates. Falls back to a legacy
+    top-level templates/ dir if no skill templates are found."""
+    if phase:
+        roots = [os.path.join(SKILLS_DIR, phase, "templates")]
+    else:
+        roots = sorted(glob.glob(os.path.join(SKILLS_DIR, "*", "templates")))
+
+    if not any(os.path.isdir(r) for r in roots):
+        legacy = os.path.join(SKILL_DIR, "templates")
+        if os.path.isdir(legacy):
+            roots = [legacy]
+
+    chunks = []
+    for root in roots:
+        for path in sorted(glob.glob(os.path.join(root, "*.md"))):
+            chunks.append(open(path, encoding="utf-8").read())
+    return "\n\n".join(chunks)
+
+
+def build_system_prompt(phase: Optional[str] = None) -> str:
+    """Build the drafting system prompt: shared CSEE style guide + signature +
+    the relevant phase's templates + real examples."""
+    style_guide = open(f"{SKILL_DIR}/style_guide.md", encoding="utf-8").read()
+    examples = _read_first_existing("examples/historical_messages.md",
+                                    "examples/historical_messages.example.md")
+    return f"""
 You are a messaging assistant for the Center for Software Engineering Excellence (CSEE), drafting communications on behalf of the CSEE team.
 
-Read the skill instructions and examples below, then draft the requested message.
+Read the style guide and examples below, then draft the requested message.
 
 --- EMAIL SIGNATURE (end EVERY email with this EXACT block, verbatim) ---
 {_SIGNATURE}
 
---- SKILL ---
-{open(f"{SKILL_DIR}/SKILL.md", encoding="utf-8").read()}
+--- CSEE STYLE GUIDE ---
+{style_guide}
 
 --- TEMPLATES ---
-{open(f"{SKILL_DIR}/templates/acceptance_email.md", encoding="utf-8").read()}
-{open(f"{SKILL_DIR}/templates/event_invitation_email.md", encoding="utf-8").read()}
-{open(f"{SKILL_DIR}/templates/slack_welcome_contract.md", encoding="utf-8").read()}
+{_load_templates(phase)}
 
 --- REAL EXAMPLES ---
-{_read_first_existing("examples/historical_messages.md", "examples/historical_messages.example.md")}
+{examples}
 
 Always output EXACTLY in this format (no extra text before or after):
 CHANNEL: Email|Slack
@@ -66,6 +95,10 @@ IMPORTANT RULES:
 - If CHANNEL is Email: write plain text only — no markdown, no asterisks, no underscores.
 - If CHANNEL is Slack: use Slack markdown (*bold*, _italic_, bullet points, emojis) as specified in the formatting rules above.
 """
+
+
+# Default prompt (all phases) for the interactive CLI / backward compatibility.
+SYSTEM_PROMPT = build_system_prompt()
 
 MISSING_FIELDS_PROMPT = """
 The user wants to draft this message: "{request}"

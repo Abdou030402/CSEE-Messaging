@@ -1,7 +1,0 @@
-# Slack recipients — one email address per line (used for DM lookup).
-# Lines starting with # are ignored.
-#
-# This is the COMMITTED EXAMPLE. Copy it to recipients_slack.txt (gitignored)
-# and put your real / test lookups there:
-#     cp recipients_slack.example.txt recipients_slack.txt
-student1@example.com

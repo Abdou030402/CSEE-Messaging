@@ -1,9 +1,0 @@
-# Email recipients — one address per line.
-# Everyone listed here will receive emails when Claude confirms a send.
-# Lines starting with # are ignored.
-#
-# This is the COMMITTED EXAMPLE. Copy it to recipients_email.txt (which is
-# gitignored) and put your real / test recipients there:
-#     cp recipients_email.example.txt recipients_email.txt
-student1@example.com
-student2@example.com

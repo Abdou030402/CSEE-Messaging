@@ -65,9 +65,3 @@ post to #announcements that the JST kickoff is on June 3rd at 18:00 in room MI 0
 ```
 
 The first time you ask Claude to send a **Slack** message, it walks you through a one-time browser login — just follow the steps it gives you. After that, it sends automatically.
-
----
-
-## Next step
-
-Recipients are currently read from a temporary local list; the next step is to retrieve them from the database once it's ready.

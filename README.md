@@ -111,29 +111,6 @@ Claude will:
 
 ---
 
-## Prototype web UI (demo)
-
-A minimal browser frontend for showcasing the flow without the terminal. It runs Claude
-headless behind a tiny Flask server — same MCP tools, same `CLAUDE.md`, same phase skills.
-
-```bash
-pip install -r requirements.txt   # installs flask
-python app.py                     # then open http://localhost:5000
-```
-
-Type a request, optionally tick **"Actually send it"** (otherwise it just drafts), and hit
-**Run**. The page shows the draft or a ✅ Done confirmation.
-
-- It's a **one-shot** UI: Claude won't ask follow-up questions — it drafts with whatever
-  details you give and omits the rest (no placeholders). Put all the details in the box.
-- **Email** works out of the box (sends to `recipients_email.txt`). **Slack** sending needs
-  the one-time browser authorization first — do it once in `claude .` (just ask to send any
-  Slack message and approve the link); after that the cached token lets the web UI post too.
-- The server uses `--dangerously-skip-permissions` so it can act without interactive prompts.
-  It's meant for a **local demo on your own machine**, not public hosting.
-
----
-
 ## How it works
 
 ```

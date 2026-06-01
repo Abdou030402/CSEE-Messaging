@@ -34,7 +34,10 @@ When a user first authenticates, they must authorize THIS workspace (see README 
 4. Ask: "Send this?" — if yes:
    - **Email** → call `send_email` from the `csee-messaging` MCP server (sends to recipients in `recipients_email.txt`)
    - **Slack** → use the `slack` MCP server tools (the official Slack connector) to post to the channel the request specifies. The workspace is fixed (see above) — never ask for it. If no channel/person is mentioned, ask only for the channel or person.
-     - **If Slack is not connected yet** (the slack posting tools aren't available, or a call fails with an auth error): do NOT tell the user to run `/mcp`. Instead call `mcp__slack__authenticate` yourself, give the user the authorization URL it returns, and ask them to open it and approve in their browser. Once they confirm (or if the connector reports success), continue and post the message automatically. This browser approval is a one-time step — after it, never ask again.
+     - **If Slack is not connected yet** (the slack posting tools aren't available, or a call fails with an auth error), connect it depending on where you're running:
+       - **Interactive terminal (`claude .`)** — tell the user to run `/mcp`, select **slack**, and complete the browser login. This is simpler than driving auth by hand: Claude Code captures the OAuth callback automatically, so there's no callback URL to copy-paste. After they confirm, continue and post the message automatically.
+       - **Headless (non-interactive `claude -p`, where `/mcp` isn't available)** — fall back to driving auth yourself: call `mcp__slack__authenticate`, give the user the authorization URL it returns, ask them to open it and approve, then (if the redirect page errors) have them paste the `localhost` callback URL back and call `mcp__slack__complete_authentication` with it.
+       - Either way, this browser approval is a one-time step — after it, never ask again.
 
 ## Tools available
 
@@ -55,4 +58,4 @@ When a user first authenticates, they must authorize THIS workspace (see README 
 - Never use placeholders. Ask for missing info first.
 - Never ask who to send to for email. Recipients are in `recipients_email.txt`.
 - For Slack, the workspace is fixed — never ask which workspace. Only ask for the target channel or user if not specified in the request.
-- Never instruct the user to run `/mcp` themselves. If Slack needs authentication, drive it via the `mcp__slack__authenticate` tool (one-time browser approval), then continue automatically.
+- If Slack needs authentication: in the interactive terminal, tell the user to run `/mcp` → select **slack** (Claude Code handles the OAuth callback automatically). Only in headless contexts where `/mcp` isn't available (e.g. a non-interactive `claude -p` run) fall back to driving `mcp__slack__authenticate` / `mcp__slack__complete_authentication` yourself. Either way it's a one-time browser approval — after it, continue automatically and never ask again.
